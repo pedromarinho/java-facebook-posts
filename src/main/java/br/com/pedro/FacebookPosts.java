@@ -1,15 +1,16 @@
 package br.com.pedro;
 
 import java.util.Date;
+import java.util.List;
 
+import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.Version;
-import com.restfb.json.JsonArray;
-import com.restfb.json.JsonObject;
-import com.restfb.json.JsonValue;
+import com.restfb.types.Post;
 
+import br.com.pedro.dao.PostDAO;
 import br.com.pedro.utils.Utils;
 
 /**
@@ -23,15 +24,18 @@ public class FacebookPosts {
 	/**
 	 * A valid Graph API access token.
 	 */
-	private final String ACCESS_TOKEN = "INSERT A VALID ACCESS TOKEN";
+	private final String ACCESS_TOKEN = "EAACEdEose0cBABeGdzSUPbX8h0R50i58NwLoIKRyZCEgZBdjPk2qhm7PZCtOksbVr1FaXTWWZANBfTEwHymh2CFqPszgwd5GxhDuVmmLSFV4ZCt4QNphUoQ5PlTT7qNzi8iVXthyN3ReLnOZBFkzZBR2XLG146IzFyJkLtAfQgjAOj64uTjCOuZAEKvq1hvskzQZD";
 
 	/**
 	 * RestFB Graph API client.
 	 */
 	private FacebookClient facebookClient;
 
+	private PostDAO postDAO;
+
 	public FacebookPosts() {
 		this.facebookClient = new DefaultFacebookClient(ACCESS_TOKEN, Version.VERSION_2_3);
+		this.postDAO = new PostDAO();
 	}
 
 	/**
@@ -48,20 +52,16 @@ public class FacebookPosts {
 
 		Date since = Utils.decreaseDays(days, until);
 
-		JsonObject pageFeed = facebookClient.fetchObject(page + "/feed", JsonObject.class,
-				Parameter.with("until", until), Parameter.with("since", since));
+		Connection<Post> messages = facebookClient.fetchConnection(page + "/feed", Post.class,
+				Parameter.with("since", since), Parameter.with("until", until), Parameter.with("type", "post"));
 
-		JsonArray jsonArray = pageFeed.get("data").asArray();
-		for (JsonValue jsonValue : jsonArray) {
-			String id = jsonValue.asObject().get("id").toString();
-			try {
-				String message = jsonValue.asObject().get("message").toString();
-				String createdTime = jsonValue.asObject().get("created_time").toString();
-				System.out.println(id);
-				System.out.println(message);
-				System.out.println(createdTime);
-			} catch (Exception e) {
-				e.printStackTrace();
+		for (List<Post> feedConnectionPage : messages) {
+			for (Post post : feedConnectionPage) {
+				String id = post.getId();
+				String message = post.getMessage();
+				java.sql.Date date = new java.sql.Date(post.getCreatedTime().getTime());
+
+				postDAO.save(new br.com.pedro.model.Post(id, message, date));
 			}
 		}
 	}

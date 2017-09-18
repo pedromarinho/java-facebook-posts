@@ -1,11 +1,16 @@
-import java.util.Calendar;
+package br.com.pedro;
+
 import java.util.Date;
 
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.Version;
+import com.restfb.json.JsonArray;
 import com.restfb.json.JsonObject;
+import com.restfb.json.JsonValue;
+
+import br.com.pedro.utils.Utils;
 
 /**
  * Java Facebook Posts
@@ -41,29 +46,24 @@ public class FacebookPosts {
 
 		Date until = new Date();
 
-		Date since = subtractDays(days, until);
+		Date since = Utils.decreaseDays(days, until);
 
 		JsonObject pageFeed = facebookClient.fetchObject(page + "/feed", JsonObject.class,
 				Parameter.with("until", until), Parameter.with("since", since));
 
-		System.out.println(pageFeed.toString());
-
-	}
-
-	/**
-	 * Subtract days from a date
-	 * 
-	 * @param days
-	 *            The number of days to subtract.
-	 * @param date
-	 *            A date.
-	 * @return The entry date minus x days.
-	 */
-	private Date subtractDays(int days, Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.add(Calendar.DATE, -days);
-		return calendar.getTime();
+		JsonArray jsonArray = pageFeed.get("data").asArray();
+		for (JsonValue jsonValue : jsonArray) {
+			String id = jsonValue.asObject().get("id").toString();
+			try {
+				String message = jsonValue.asObject().get("message").toString();
+				String createdTime = jsonValue.asObject().get("created_time").toString();
+				System.out.println(id);
+				System.out.println(message);
+				System.out.println(createdTime);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	/**

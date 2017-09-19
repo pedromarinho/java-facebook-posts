@@ -1,6 +1,7 @@
 package br.com.pedro.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.pedro.model.Post;
-import br.com.pedro.utils.Utils;
 
 public class PostDAO {
 
@@ -22,6 +22,7 @@ public class PostDAO {
 			+ "created_time date, " + "CONSTRAINT pk_id PRIMARY KEY (id))";
 	private final String SELECT_SQL = "SELECT * FROM posts";
 	private final String INSERT_SQL = "INSERT INTO posts (id, message, created_time) VALUES (?, ?, ?)";
+	private final String SELECT_BY_INTERVAL = "SELECT * FROM posts WHERE created_time BETWEEN ? AND ?";
 
 	public PostDAO() {
 		try (Connection connection = DriverManager.getConnection(url, user, pass)) {
@@ -57,8 +58,7 @@ public class PostDAO {
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				posts.add(new Post(rs.getString("id"), rs.getString("message"),
-						Utils.formatToSqlDate(rs.getString("created_time"), "yyyy-MM-dd")));
+				posts.add(new Post(rs.getString("id"), rs.getString("message"), rs.getDate("created_time")));
 			}
 			stmt.close();
 		} catch (SQLException e) {
@@ -66,6 +66,24 @@ public class PostDAO {
 		}
 		return posts;
 
+	}
+
+	public List<Post> listByDateInterval(Date since, Date until) throws ParseException {
+		List<Post> posts = new ArrayList<Post>();
+		try (Connection connection = DriverManager.getConnection(url, user, pass)) {
+			PreparedStatement stmt = connection.prepareStatement(SELECT_BY_INTERVAL);
+			stmt.setDate(1, since);
+			stmt.setDate(2, until);
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+				posts.add(new Post(rs.getString("id"), rs.getString("message"), rs.getDate("created_time")));
+			}
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return posts;
 	}
 
 	private void createTable() {
@@ -78,5 +96,4 @@ public class PostDAO {
 		}
 
 	}
-
 }

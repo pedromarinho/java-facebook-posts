@@ -3,6 +3,7 @@ package br.com.pedro;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
@@ -64,6 +65,25 @@ public class TestPostDAO {
 
 		// Assert actual database table match expected table
 		Assertion.assertEquals(expectedTable, actualTable);
+	}
+	
+	@Test
+	public void listByInterval() throws ParseException {
+		Date since = Utils.formatToSqlDate("2017-09-17", "yyyy-MM-dd");
+		Date until = Utils.formatToSqlDate("2017-09-18", "yyyy-MM-dd");
+		
+		List<Post> posts = postDao.listByDateInterval(since, until);
+		
+		assertEquals(2, posts.size());
+		assertEquals("000000000000000_1111111111111112", posts.get(0).getId());
+		assertEquals("post3 message", posts.get(1).getMessage());
+		
+		postDao.save(new Post("000000000000000_1111111111111116", "post6 message",
+				Utils.formatToSqlDate("2017-09-18", "yyyy-MM-dd")));
+		
+		posts = postDao.listByDateInterval(since, until);
+		
+		assertEquals(3, posts.size());
 	}
 
 }

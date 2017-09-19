@@ -24,7 +24,7 @@ public class FacebookPosts {
 	/**
 	 * A valid Graph API access token.
 	 */
-	private final String ACCESS_TOKEN = "INSERT A VALID ACCESS TOKEN";
+	private final String ACCESS_TOKEN = "EAACEdEose0cBAC2575ghVdnRvE814eB9lULdG9lffvmyjELRVNEBlJwyRUu1Xu9POtq4fIRBpQUjfKlsfQo4XqDBcUKyAlD9ZCGHQtjeuG25J2shioNAUDeNLWJr154OzFZAVSKxZCwyZAXdICTjKIosY3iFRJyqGDTgdwjMfxEd4y8nRLCJVbnXBQZBjCV0ZD";
 
 	/**
 	 * RestFB Graph API client.

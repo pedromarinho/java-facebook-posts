@@ -42,7 +42,7 @@ public class TestPostDAO {
 	@Test
 	public void listAll() throws ParseException {
 		List<Post> posts = postDao.list();
-		assertEquals(4, posts.size());
+		assertEquals(11, posts.size());
 		assertEquals("000000000000000_1111111111111111", posts.get(0).getId());
 		assertEquals("post2 message", posts.get(1).getMessage());
 		assertEquals("2017-09-18", posts.get(2).getCreatedTime().toString());
@@ -50,8 +50,8 @@ public class TestPostDAO {
 	
 	@Test
 	public void insert() throws SQLException, Exception {
-		Post post = new Post("000000000000000_1111111111111115", "post5 message",
-				Utils.formatToSqlDate("2017-09-20", "yyyy-MM-dd"));
+		Post post = new Post("000000000000000_1111111111111122", "post12 message",
+				Utils.formatToSqlDate("2017-09-29", "yyyy-MM-dd"));
 		
 		postDao.save(post);
 
@@ -74,16 +74,16 @@ public class TestPostDAO {
 		
 		List<Post> posts = postDao.listByDateInterval(since, until);
 		
-		assertEquals(2, posts.size());
+		assertEquals(3, posts.size());
 		assertEquals("000000000000000_1111111111111112", posts.get(0).getId());
 		assertEquals("post3 message", posts.get(1).getMessage());
 		
-		postDao.save(new Post("000000000000000_1111111111111116", "post6 message",
+		postDao.save(new Post("000000000000000_1111111111111123", "post13 message",
 				Utils.formatToSqlDate("2017-09-18", "yyyy-MM-dd")));
 		
 		posts = postDao.listByDateInterval(since, until);
 		
-		assertEquals(3, posts.size());
+		assertEquals(4, posts.size());
 	}
 
 }

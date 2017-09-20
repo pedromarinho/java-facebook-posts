@@ -1,7 +1,6 @@
 package br.com.pedro;
 
 import java.sql.Date;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -16,7 +15,7 @@ import br.com.pedro.model.FbPost;
 import br.com.pedro.utils.Utils;
 
 /**
- * 
+ *
  * @author Pedro Marinho Medeiros
  *
  */
@@ -26,15 +25,24 @@ public class PostRetriever {
 
 	/**
 	 * Get collected posts in a date range.
-	 * 
+	 *
 	 * @param since
+	 *            Star date.
 	 * @param until
-	 * @return
-	 * @throws ParseException
+	 *            End date.
+	 * @return A json containing the posts.
+	 * @throws Exception
 	 */
-	public static JsonArray getPosts(String since, String until) throws ParseException {
+	public static JsonArray getPosts(String since, String until) throws Exception {
+		if (since == null || until == null) {
+			throw new IllegalArgumentException("Invalid Date");
+		}
 		Date sinceDate = Utils.formatToSqlDate(since, "yyyyMMdd");
 		Date untilDate = Utils.formatToSqlDate(until, "yyyyMMdd");
+
+		if (sinceDate.after(untilDate)) {
+			throw new IllegalArgumentException("Start date is longer than end date!");
+		}
 
 		List<FbPost> posts = postDAO.listByDateInterval(sinceDate, untilDate);
 
@@ -53,13 +61,18 @@ public class PostRetriever {
 
 	/**
 	 * Get number of posts per day in a date range.
-	 * 
+	 *
 	 * @param since
+	 *            Star date.
 	 * @param until
-	 * @return
-	 * @throws ParseException
+	 *            End date.
+	 * @return A json containing the number of posts per day.
+	 * @throws Exception
 	 */
-	public static JsonArray getVolume(String since, String until) throws ParseException {
+	public static JsonArray getVolume(String since, String until) throws Exception {
+		if (since == null || until == null) {
+			throw new IllegalArgumentException("Invalid Date!");
+		}
 
 		JsonArray result = new JsonArray();
 
@@ -67,6 +80,11 @@ public class PostRetriever {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		Date start = new Date(sdf.parse(since).getTime());
 		Date end = new Date(sdf.parse(until).getTime());
+
+		if (start.after(end)) {
+			throw new IllegalArgumentException("Start date is longer than end date!");
+		}
+
 		gcal.setTime(start);
 
 		List<FbPost> posts = postDAO.listByDateInterval(start, end);
@@ -94,12 +112,4 @@ public class PostRetriever {
 		}
 		return result;
 	}
-
-	public static void main(String[] args) throws ParseException {
-
-		System.out.println(PostRetriever.getPosts("20160916", "20170929"));
-
-		System.out.println(PostRetriever.getVolume("20160916", "20170919"));
-	}
-
 }

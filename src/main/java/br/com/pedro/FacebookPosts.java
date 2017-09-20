@@ -21,12 +21,6 @@ import br.com.pedro.utils.Utils;
  *
  */
 public class FacebookPosts {
-
-	/**
-	 * A valid Graph API access token.
-	 */
-	private final String ACCESS_TOKEN = "INSERT A VALID ACCESS TOKEN";
-
 	/**
 	 * RestFB Graph API client.
 	 */
@@ -34,8 +28,8 @@ public class FacebookPosts {
 
 	private FbPostDAO fbPostDAO;
 
-	public FacebookPosts() {
-		this.facebookClient = new DefaultFacebookClient(ACCESS_TOKEN, Version.VERSION_2_3);
+	public FacebookPosts(String accessToken) {
+		this.facebookClient = new DefaultFacebookClient(accessToken, Version.VERSION_2_3);
 		this.fbPostDAO = new FbPostDAO();
 	}
 
@@ -48,10 +42,15 @@ public class FacebookPosts {
 	 *            The page to retrieve posts.
 	 */
 	public void retrievePosts(int days, String page) {
+		if (days < 0 || page == null || page.isEmpty()) {
+			throw new IllegalArgumentException("Invalid data!");
+		}
 
 		Date until = new Date();
 
 		Date since = Utils.decreaseDays(days, until);
+
+		System.out.println("retrieving posts from " + since + " to " + until.toString());
 
 		Connection<Post> messages = facebookClient.fetchConnection(page + "/feed", Post.class,
 				Parameter.with("since", since), Parameter.with("until", until), Parameter.with("type", "post"));
@@ -65,20 +64,23 @@ public class FacebookPosts {
 				fbPostDAO.save(new FbPost(id, message, date));
 			}
 		}
+
+		System.out.println("finished");
 	}
 
 	/**
-	 * Enter two arguments: the number of days to collect posts and the page id.
+	 * Enter three arguments: the number of days to collect posts, the page id
+	 * and a valid Graph API access token.
 	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		if (args.length < 2) {
+		if (args.length < 3) {
 			throw new IllegalArgumentException(
-					"Enter two arguments: the number of days to collect posts and the page id.");
+					"Enter three arguments: the number of days to collect posts, the page id and a valid Graph API access token.");
 		}
 		try {
-			FacebookPosts fp = new FacebookPosts();
+			FacebookPosts fp = new FacebookPosts(args[2]);
 			fp.retrievePosts(Integer.parseInt(args[0]), args[1]);
 		} catch (NumberFormatException nfe) {
 			System.err.println("The first argument is not an integer.");

@@ -13,8 +13,10 @@ public class FbPost {
 	private String message;
 	private Date createdTime;
 
-	
 	public FbPost(String id, String message, Date createdTime) {
+		if (id == null || id.isEmpty() || createdTime == null) {
+			throw new IllegalArgumentException("Invalid data!");
+		}
 		this.id = id;
 		this.message = message;
 		this.createdTime = createdTime;
@@ -27,24 +29,12 @@ public class FbPost {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	public String getMessage() {
 		return message;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
-
 	public Date getCreatedTime() {
 		return createdTime;
-	}
-
-	public void setCreatedTime(Date createdTime) {
-		this.createdTime = createdTime;
 	}
 
 	@Override

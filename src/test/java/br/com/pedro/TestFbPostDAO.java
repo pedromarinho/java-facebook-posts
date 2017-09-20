@@ -76,7 +76,7 @@ public class TestFbPostDAO {
 		
 		assertEquals(3, posts.size());
 		assertEquals("000000000000000_1111111111111112", posts.get(0).getId());
-		assertEquals("post3 message", posts.get(1).getMessage());
+		assertEquals("post8 message", posts.get(1).getMessage());
 		
 		fbPostDAO.save(new FbPost("000000000000000_1111111111111123", "post13 message",
 				Utils.formatToSqlDate("2017-09-18", "yyyy-MM-dd")));

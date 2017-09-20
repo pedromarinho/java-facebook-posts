@@ -22,7 +22,7 @@ public class FbPostDAO {
 			+ "created_time date, " + "CONSTRAINT pk_id PRIMARY KEY (id))";
 	private final String SELECT_SQL = "SELECT * FROM posts";
 	private final String INSERT_SQL = "INSERT INTO posts (id, message, created_time) VALUES (?, ?, ?)";
-	private final String SELECT_BY_INTERVAL = "SELECT * FROM posts WHERE created_time BETWEEN ? AND ?";
+	private final String SELECT_BY_INTERVAL = "SELECT * FROM posts WHERE created_time BETWEEN ? AND ? ORDER BY created_time";
 
 	public FbPostDAO() {
 		try (Connection connection = DriverManager.getConnection(url, user, pass)) {

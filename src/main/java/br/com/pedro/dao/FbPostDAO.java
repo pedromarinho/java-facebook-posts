@@ -10,9 +10,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.pedro.model.Post;
+import br.com.pedro.model.FbPost;
 
-public class PostDAO {
+public class FbPostDAO {
 
 	private String url = "jdbc:postgresql://localhost:5432/postgres";
 	private String user = "postgres";
@@ -24,7 +24,7 @@ public class PostDAO {
 	private final String INSERT_SQL = "INSERT INTO posts (id, message, created_time) VALUES (?, ?, ?)";
 	private final String SELECT_BY_INTERVAL = "SELECT * FROM posts WHERE created_time BETWEEN ? AND ?";
 
-	public PostDAO() {
+	public FbPostDAO() {
 		try (Connection connection = DriverManager.getConnection(url, user, pass)) {
 			createTable();
 			System.out.println("connected");
@@ -33,7 +33,7 @@ public class PostDAO {
 		}
 	}
 
-	public void save(Post post) {
+	public void save(FbPost post) {
 		try (Connection connection = DriverManager.getConnection(url, user, pass)) {
 			PreparedStatement stmt = connection.prepareStatement(INSERT_SQL);
 
@@ -51,14 +51,14 @@ public class PostDAO {
 
 	}
 
-	public List<Post> list() throws ParseException {
-		List<Post> posts = new ArrayList<Post>();
+	public List<FbPost> list() throws ParseException {
+		List<FbPost> posts = new ArrayList<FbPost>();
 		try (Connection connection = DriverManager.getConnection(url, user, pass)) {
 			PreparedStatement stmt = connection.prepareStatement(SELECT_SQL);
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				posts.add(new Post(rs.getString("id"), rs.getString("message"), rs.getDate("created_time")));
+				posts.add(new FbPost(rs.getString("id"), rs.getString("message"), rs.getDate("created_time")));
 			}
 			stmt.close();
 		} catch (SQLException e) {
@@ -68,8 +68,8 @@ public class PostDAO {
 
 	}
 
-	public List<Post> listByDateInterval(Date since, Date until) throws ParseException {
-		List<Post> posts = new ArrayList<Post>();
+	public List<FbPost> listByDateInterval(Date since, Date until) throws ParseException {
+		List<FbPost> posts = new ArrayList<FbPost>();
 		try (Connection connection = DriverManager.getConnection(url, user, pass)) {
 			PreparedStatement stmt = connection.prepareStatement(SELECT_BY_INTERVAL);
 			stmt.setDate(1, since);
@@ -77,7 +77,7 @@ public class PostDAO {
 			ResultSet rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				posts.add(new Post(rs.getString("id"), rs.getString("message"), rs.getDate("created_time")));
+				posts.add(new FbPost(rs.getString("id"), rs.getString("message"), rs.getDate("created_time")));
 			}
 			stmt.close();
 		} catch (SQLException e) {

@@ -11,8 +11,8 @@ import java.util.Map;
 import com.restfb.json.JsonArray;
 import com.restfb.json.JsonObject;
 
-import br.com.pedro.dao.PostDAO;
-import br.com.pedro.model.Post;
+import br.com.pedro.dao.FbPostDAO;
+import br.com.pedro.model.FbPost;
 import br.com.pedro.utils.Utils;
 
 /**
@@ -22,7 +22,7 @@ import br.com.pedro.utils.Utils;
  */
 public class PostRetriever {
 
-	private static PostDAO postDAO = new PostDAO();
+	private static FbPostDAO postDAO = new FbPostDAO();
 
 	/**
 	 * Get collected posts in a date range.
@@ -36,11 +36,11 @@ public class PostRetriever {
 		Date sinceDate = Utils.formatToSqlDate(since, "yyyyMMdd");
 		Date untilDate = Utils.formatToSqlDate(until, "yyyyMMdd");
 
-		List<Post> posts = postDAO.listByDateInterval(sinceDate, untilDate);
+		List<FbPost> posts = postDAO.listByDateInterval(sinceDate, untilDate);
 
 		JsonArray result = new JsonArray();
 
-		for (Post post : posts) {
+		for (FbPost post : posts) {
 			JsonObject jsonObject = new JsonObject();
 			jsonObject.add("id", post.getId());
 			jsonObject.add("message", post.getMessage());
@@ -69,11 +69,11 @@ public class PostRetriever {
 		Date end = new Date(sdf.parse(until).getTime());
 		gcal.setTime(start);
 
-		List<Post> posts = postDAO.listByDateInterval(start, end);
+		List<FbPost> posts = postDAO.listByDateInterval(start, end);
 
 		Map<Date, Integer> dateMap = new HashMap<Date, Integer>();
 
-		for (Post post : posts) {
+		for (FbPost post : posts) {
 			Date date = post.getCreatedTime();
 			if (dateMap.containsKey(date)) {
 				dateMap.replace(date, dateMap.get(date) + 1);

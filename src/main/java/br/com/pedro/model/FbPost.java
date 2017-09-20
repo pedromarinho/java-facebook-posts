@@ -8,19 +8,19 @@ import java.sql.Date;
  * @author Pedro Marinho Medeiros
  *
  */
-public class Post {
+public class FbPost {
 	private String id;
 	private String message;
 	private Date createdTime;
 
 	
-	public Post(String id, String message, Date createdTime) {
+	public FbPost(String id, String message, Date createdTime) {
 		this.id = id;
 		this.message = message;
 		this.createdTime = createdTime;
 	}
 
-	public Post() {
+	public FbPost() {
 	}
 
 	public String getId() {

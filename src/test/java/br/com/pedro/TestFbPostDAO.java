@@ -17,20 +17,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import br.com.pedro.dao.PostDAO;
-import br.com.pedro.model.Post;
+import br.com.pedro.dao.FbPostDAO;
+import br.com.pedro.model.FbPost;
 import br.com.pedro.utils.Utils;
 
-public class TestPostDAO {
+public class TestFbPostDAO {
 	
 	JdbcDatabaseTester jdt;
-	PostDAO postDao;
+	FbPostDAO fbPostDAO;
 
 	@Before
 	public void setUp() throws Exception {
 		jdt = new JdbcDatabaseTester("org.postgresql.Driver", "jdbc:postgresql://localhost:5432/postgres", "postgres",
 				"postgres");
-		this.postDao = new PostDAO();
+		this.fbPostDAO = new FbPostDAO();
 		jdt.setDataSet(new FlatXmlDataSetBuilder().build(new File("dataSet.xml")));
 		jdt.onSetup();
 	}
@@ -41,7 +41,7 @@ public class TestPostDAO {
 
 	@Test
 	public void listAll() throws ParseException {
-		List<Post> posts = postDao.list();
+		List<FbPost> posts = fbPostDAO.list();
 		assertEquals(11, posts.size());
 		assertEquals("000000000000000_1111111111111111", posts.get(0).getId());
 		assertEquals("post2 message", posts.get(1).getMessage());
@@ -50,10 +50,10 @@ public class TestPostDAO {
 	
 	@Test
 	public void insert() throws SQLException, Exception {
-		Post post = new Post("000000000000000_1111111111111122", "post12 message",
+		FbPost post = new FbPost("000000000000000_1111111111111122", "post12 message",
 				Utils.formatToSqlDate("2017-09-29", "yyyy-MM-dd"));
 		
-		postDao.save(post);
+		fbPostDAO.save(post);
 
 		// Fetch database data after executing your code
 		IDataSet databaseDataSet = jdt.getConnection().createDataSet();
@@ -72,16 +72,16 @@ public class TestPostDAO {
 		Date since = Utils.formatToSqlDate("2017-09-17", "yyyy-MM-dd");
 		Date until = Utils.formatToSqlDate("2017-09-18", "yyyy-MM-dd");
 		
-		List<Post> posts = postDao.listByDateInterval(since, until);
+		List<FbPost> posts = fbPostDAO.listByDateInterval(since, until);
 		
 		assertEquals(3, posts.size());
 		assertEquals("000000000000000_1111111111111112", posts.get(0).getId());
 		assertEquals("post3 message", posts.get(1).getMessage());
 		
-		postDao.save(new Post("000000000000000_1111111111111123", "post13 message",
+		fbPostDAO.save(new FbPost("000000000000000_1111111111111123", "post13 message",
 				Utils.formatToSqlDate("2017-09-18", "yyyy-MM-dd")));
 		
-		posts = postDao.listByDateInterval(since, until);
+		posts = fbPostDAO.listByDateInterval(since, until);
 		
 		assertEquals(4, posts.size());
 	}

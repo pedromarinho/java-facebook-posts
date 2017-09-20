@@ -10,7 +10,8 @@ import com.restfb.Parameter;
 import com.restfb.Version;
 import com.restfb.types.Post;
 
-import br.com.pedro.dao.PostDAO;
+import br.com.pedro.dao.FbPostDAO;
+import br.com.pedro.model.FbPost;
 import br.com.pedro.utils.Utils;
 
 /**
@@ -24,18 +25,18 @@ public class FacebookPosts {
 	/**
 	 * A valid Graph API access token.
 	 */
-	private final String ACCESS_TOKEN = "EAACEdEose0cBAC2575ghVdnRvE814eB9lULdG9lffvmyjELRVNEBlJwyRUu1Xu9POtq4fIRBpQUjfKlsfQo4XqDBcUKyAlD9ZCGHQtjeuG25J2shioNAUDeNLWJr154OzFZAVSKxZCwyZAXdICTjKIosY3iFRJyqGDTgdwjMfxEd4y8nRLCJVbnXBQZBjCV0ZD";
+	private final String ACCESS_TOKEN = "INSERT A VALID ACCESS TOKEN";
 
 	/**
 	 * RestFB Graph API client.
 	 */
 	private FacebookClient facebookClient;
 
-	private PostDAO postDAO;
+	private FbPostDAO fbPostDAO;
 
 	public FacebookPosts() {
 		this.facebookClient = new DefaultFacebookClient(ACCESS_TOKEN, Version.VERSION_2_3);
-		this.postDAO = new PostDAO();
+		this.fbPostDAO = new FbPostDAO();
 	}
 
 	/**
@@ -61,7 +62,7 @@ public class FacebookPosts {
 				String message = post.getMessage();
 				java.sql.Date date = new java.sql.Date(post.getCreatedTime().getTime());
 
-				postDAO.save(new br.com.pedro.model.Post(id, message, date));
+				fbPostDAO.save(new FbPost(id, message, date));
 			}
 		}
 	}
